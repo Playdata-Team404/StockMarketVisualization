@@ -20,7 +20,7 @@ def index():
 
 @app.route('/getstock', methods=['get'])
 def full_crawling():
-    Crawling.stock(11)
+    Crawling.crawl_stock_all(11)
 
 
 @app.route('/stockchart', methods=['get', 'post'])
