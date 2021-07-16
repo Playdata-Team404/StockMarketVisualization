@@ -34,7 +34,6 @@ def stock_candle(stock_name):
     df_['MA3'] = df_['close'].rolling(3).mean()
     df_['MA5'] = df_['close'].rolling(5).mean()
     df_['MA10'] = df_['close'].rolling(10).mean()
-    df_['MA20'] = df_['close'].rolling(20).mean()
     df_ = df_.sort_index(ascending=True)
 
     # 그래프 그리기
