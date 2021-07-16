@@ -8,11 +8,15 @@ import warnings
 
 class Crawling():
     def crawl_stock_one():
-        # 여기다가 es에서 받은 code 냅두기
+        warnings.filterwarnings('ignore')
+        
+        es = Elasticsearch()
+        res = es.search(index="stock_info", body={"size":0,"aggs":{"code":{"terms":{"field":"code.keyword"}}}})
+        
         stock=[]
-        for stock_num in ['005930']:
+        for stock_num in res['aggregations']['code']['buckets']:
             driver = webdriver.Chrome('C:/driver/chromedriver')
-            main_url = "https://m.stock.naver.com/index.html#/domestic/stock/"+ stock_num +"/price"
+            main_url = "https://m.stock.naver.com/index.html#/domestic/stock/"+ stock_num['key'] +"/price"
             driver.get(main_url)
 
             html = driver.page_source
@@ -34,7 +38,6 @@ class Crawling():
             stock.append(company)
 
             time.sleep(1)
-
 
         col=['code','name','date','close','open','high','low','volume']
         df = pd.DataFrame(stock,columns=col)
@@ -96,18 +99,14 @@ class Crawling():
             time.sleep(1)
             
             # 뉴스 클릭
-            
             for i in range(1,21):
-
                 time.sleep(3)
                 news=[]
-                
                 try:
                     driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[4]/ul/li[{}]/a'.format(i)).click()
                 except:
                     print("Pass")
                     continue
-
                 time.sleep(2)
 
                 news.append(driver.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/span[1]').text[:6])
@@ -128,7 +127,7 @@ class Crawling():
 
         col=['code','name','date','subject','content']
         df = pd.DataFrame(stock,columns=col)
-        df.to_csv("news.csv", mode='a',header=False,index=False)
+        df.to_csv("C:/ELKStack/0.dataset/news.csv", header=False,index=False)
 
 if __name__ == '__main__':
     # Crawling.crawl_stock_all()
