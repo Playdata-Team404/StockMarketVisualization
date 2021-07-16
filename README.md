@@ -13,7 +13,7 @@
    🤡 <a href="https://github.com/purple-cabbage0030">이홍주</a>
    <ul>
     <li> app.py, index.html 모듈 개발 </li>
-    <li> ES pipeline 환경 구축 및 crawling 연결 코드 작성</li>
+    <li> ES pipeline 환경 구축 및 flask 연동 비동기 기능 개발</li>
    </ul><br>
    🙂 <a href="https://github.com/johnny9210">정일균</a></li>
     <ul>
