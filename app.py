@@ -1,29 +1,35 @@
 from flask import Flask, render_template, request, jsonify
-import time
+from pandas.core.accessor import register_index_accessor
+# import time
 from crawler import Crawling
-from elasticsearch import Elasticsearch
+# from elasticsearch import Elasticsearch
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
+from matplotlib import font_manager, rc
 import warnings
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
 
-
 @app.route('/', methods=['get'])
 def index():
-    return render_template('00.index.html')
+    return render_template('index.html')
 
 
-@app.route('/fullcrawling', methods=['get'])
+@app.route('/getstock', methods=['get'])
 def full_crawling():
-    Crawling.crawl_stock_all()
+    Crawling.crawl_stock_all(11)
 
 
-@app.route('/stockchart', methods=['get'])
-def stock_candle(stock_name):
+@app.route('/stockchart', methods=['get', 'post'])
+def stock_candle():
+    path = 'c:/Windows/Fonts/malgun.ttf'
+    font_name = font_manager.FontProperties(fname = path).get_name()
+    rc('font', family = font_name)
+
+    stock_name = request.form.get("stock_name")
 
     warnings.filterwarnings('ignore')
     col = ['code', 'name', 'date', 'close', 'open', 'high', 'low', 'volume']
@@ -47,7 +53,7 @@ def stock_candle(stock_name):
 
     fig = plt.figure(figsize=(20, 10))
     ax = fig.add_subplot(111)
-    index = df_.index.astype('str')  # 캔들스틱 x축이 str로 들어감
+    index = df_.index.astype('str')
 
     # 이동평균선 그리기
     ax.plot(index, df_['MA3'], label='MA3', linewidth=0.7)
@@ -67,8 +73,9 @@ def stock_candle(stock_name):
                       width=0.5, colorup='r', colordown='b')
     ax.legend()
     plt.grid()
-    plt.savefig("static\img\candlestick.png")
+    plt.savefig("static/img/candlestick{}.png".format(stock_name))
+    return "static/img/candlestick{}.png".format(stock_name)
 
 
 if __name__ == '__main__':
-    stock_candle('삼성전자')
+    app.run(debug=True, host="127.0.0.1", port=5000)
