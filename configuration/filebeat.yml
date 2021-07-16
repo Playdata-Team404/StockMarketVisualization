@@ -28,8 +28,8 @@ filebeat.inputs:
     #- /var/log/*.log
     # - C:\ELKStack\0.dataset\covid19_ko_*.csv
     # - C:\ELKStack\0.dataset\train.csv
-    - C:\ELKStack\0.dataset\stock_info.csv
-    - C:\ELKStack\0.dataset\news.csv
+    - C:\ELKStack\0.dataset\stock.csv
+    # - C:\ELKStack\0.dataset\news.csv
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
   # matching any regular expression from the list.
