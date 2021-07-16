@@ -96,8 +96,10 @@ class Crawling():
             time.sleep(1)
             
             # 뉴스 클릭
-            
-            for i in range(1,21):
+            for i in range(3):
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                time.sleep(1)
+            for i in range(1,61):
 
                 time.sleep(3)
                 news=[]
