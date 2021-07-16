@@ -1,6 +1,5 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
-import requests
 import time
 import pandas as pd
 from elasticsearch import Elasticsearch
@@ -8,11 +7,13 @@ import warnings
 
 class Crawling():
     def crawl_stock_one():
-        # 여기다가 es에서 받은 code 냅두기
+        es = Elasticsearch()
+        res = es.search(index="stock_info", body={"size":0,"aggs":{"code":{"terms":{"field":"code.keyword"}}}})
+        
         stock=[]
-        for stock_num in ['005930']:
+        for stock_num in res['aggregations']['code']['buckets']:
             driver = webdriver.Chrome('C:/driver/chromedriver')
-            main_url = "https://m.stock.naver.com/index.html#/domestic/stock/"+ stock_num +"/price"
+            main_url = "https://m.stock.naver.com/index.html#/domestic/stock/"+ stock_num['key'] +"/price"
             driver.get(main_url)
 
             html = driver.page_source
@@ -132,7 +133,7 @@ class Crawling():
         df = pd.DataFrame(stock,columns=col)
         df.to_csv("news.csv", mode='a',header=False,index=False)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # Crawling.crawl_stock_all()
     # Crawling.crawl_stock_one()
-    Crawling.crawl_news_all()
+    # Crawling.crawl_news_all()
