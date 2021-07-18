@@ -1,14 +1,13 @@
 from flask import Flask, render_template, request, jsonify
 from pandas.core.accessor import register_index_accessor
-# import time
 from crawler import Crawling
-# from elasticsearch import Elasticsearch
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
 from matplotlib import font_manager, rc
 import warnings
+import platform
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -19,15 +18,23 @@ def index():
 
 
 @app.route('/getstock', methods=['get'])
-def full_crawling():
-    Crawling.crawl_stock_all(11)
+def stock_crawling():
+    Crawling.crawl_stock_all()
 
+@app.route('/getnews', methods=['get'])
+def news_crawling():
+    Crawling.crawl_news_all()
 
 @app.route('/stockchart', methods=['get', 'post'])
 def stock_candle():
-    path = 'c:/Windows/Fonts/malgun.ttf'
-    font_name = font_manager.FontProperties(fname = path).get_name()
-    rc('font', family = font_name)
+    if platform.system() == 'Windows':
+        path = 'c:/Windows/Fonts/malgun.ttf'
+        font_name = font_manager.FontProperties(fname = path).get_name()
+        rc('font', family = font_name)
+    elif platform.system() == 'Darwin':
+        rc('font', family = 'AppleGothic')
+    else:
+        print('Check your OS system')
 
     stock_name = request.form.get("stock_name")
 
