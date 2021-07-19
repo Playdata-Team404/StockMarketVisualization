@@ -24,8 +24,10 @@
         <option value="셀트리온">셀트리온</option>
     </select>
     <button onclick="stockchart()">종목 차트 보기</button>
+    <button onclick="wordcloud()">종목 뉴스 키워드 보기</button>
 
     <div id="chart_view"></div>
+    <div id="cloud_view"></div>
 
     <br><hr><br>
 
@@ -45,16 +47,16 @@
             xhttp.send();
         }
 
-        // function get_news() {
-        //     const xhttp = new XMLHttpRequest();
-        //     xhttp.onreadystatechange = function () {
-        //         if (this.readyState == 4 && this.status == 200) {
-        //             alert("실시간 뉴스 데이터 저장 성공")
-        //         }
-        //     };
-        //     xhttp.open("GET", "getstock");
-        //     xhttp.send();
-        // }
+        function get_news() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("실시간 뉴스 데이터 저장 성공")
+                }
+            };
+            xhttp.open("GET", "getnews");
+            xhttp.send();
+        }
 
         function stockchart() {
             const xhttp = new XMLHttpRequest();
@@ -71,6 +73,20 @@
             xhttp.send(query);
         }
 
+        function wordcloud() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var img_name = this.responseText
+                    document.getElementById("cloud_view").innerHTML = '<img src="./' + img_name + '" width=1000 height=700>'
+                }
+            };
+            xhttp.open("POST", "wordcloud");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            query = "stock_name=" + document.getElementById("stock_name").value;
+            console.log(query)
+            xhttp.send(query);
+        }
 
     </script>
 </body>
