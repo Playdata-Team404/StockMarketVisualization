@@ -5,6 +5,7 @@ import pandas as pd
 from elasticsearch import Elasticsearch
 import warnings
 from datetime import datetime
+from dao import es_dao
 
 
 class Crawling():
@@ -165,6 +166,8 @@ class Crawling():
 
         col = ['code', 'name', 'date', 'subject', 'content']
         df = pd.DataFrame(stock, columns=col)
+        d_records = df.to_dict('records')
+        es_dao.save_news(d_records)
         df.to_csv("C:/ELKStack/0.dataset/news.csv", header=False, index=False)
 
     def crawl_news_one():
@@ -176,7 +179,7 @@ class Crawling():
                         "code": {"terms": {"field": "code.keyword"}}}})
 
         stock = []
-        for stock_num in res['aggregations']['code']['buckets']:
+        for stock_num in res['aggregations']['code']['buckets'][8:9]:
             try:
                 main_url = "https://m.stock.naver.com/index.html#/domestic/stock/" + \
                     stock_num["key"] + "/news/title"
@@ -214,7 +217,7 @@ class Crawling():
                     time.sleep(2)
                     driver.back()
                     stock.append(news)
-                driver.close()
+                # driver.close()
 
             except Exception as e:
                 print("driver 주소 설정 에러", e)
@@ -224,7 +227,10 @@ class Crawling():
 
         col = ['code', 'name', 'date', 'subject', 'content']
         df = pd.DataFrame(stock, columns=col)
-        df.to_csv("C:/ELKStack/0.dataset/news.csv",
+
+        d_records = df.to_dict('records')
+        es_dao.save_news(d_records)
+        df.to_csv("C:/ELKStack/0.dataset/news_test.csv",
                   mode='a', header=False, index=False)
 
 
@@ -232,5 +238,5 @@ if __name__ == '__main__':
     # Crawling.crawl_stock_all()
     # Crawling.crawl_stock_one()
     # Crawling.crawl_news_all()
-    # Crawling.crawl_news_one()
+    Crawling.crawl_news_one()
     pass
