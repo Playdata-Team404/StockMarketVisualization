@@ -2,12 +2,18 @@ from flask import Flask, render_template, request, jsonify
 from pandas.core.accessor import register_index_accessor
 from crawler import Crawling
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
 from matplotlib import font_manager, rc
 import warnings
 import platform
+from soynlp.utils import DoublespaceLineCorpus
+from soynlp.noun import LRNounExtractor_v2
+from soynlp.word import WordExtractor
+from wordcloud import WordCloud
+from PIL import Image
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -71,7 +77,7 @@ def stock_candle():
     ax.xaxis.set_major_locator(ticker.MaxNLocator(20))
 
     # 그래프 title과 축 이름 지정
-    ax.set_title(stock_name, fontsize=22)
+    ax.set_title('INDEX', fontsize=22)
     ax.set_xlabel('Date')
 
     # 캔들차트 그리기
@@ -88,7 +94,9 @@ def wordcloud():
     stock_name = request.form.get("stock_name")
 
     data = pd.read_csv('news.csv',encoding='utf-8')
+    # 명사 추출 객체 만들기
     noun_extractor = LRNounExtractor_v2(verbose=True)
+    # 명사 추출 학습 (frequency, score 출력)
     nouns = noun_extractor.train_extract(data[data['name']==stock_name]['content'])
     
     count=[]
@@ -97,18 +105,12 @@ def wordcloud():
         word=word.replace('"','').replace('“','').replace('‘','').replace("'",'')
         if len(word)>1:
             info.append(word)
+            # 두 글자 이상 단어 가운데 frequency만 가져옴
             info.append(score[0])
-
             count.append(info)
-    
-    icon = Image.open('dollar.png')
-    mask = Image.new("RGB", icon.size, (255,255,255))
-    mask.paste(icon,icon)
-    mask = np.array(mask)
 
-    wordcloud = WordCloud(font_path='NanumGothic.ttf',width=1500,height=1000,background_color='black',mask=mask,max_font_size=300)
+    wordcloud = WordCloud(font_path='NanumGothic.ttf',width=1500,height=1000,background_color='black',max_font_size=300)
     wordcloud.generate_from_frequencies(dict(count))
-    plt.imshow(wordcloud)
     wordcloud.to_file('static/img/word{}.png'.format(stock_name))
     return 'static/img/word{}.png'.format(stock_name)
 
