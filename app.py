@@ -83,6 +83,34 @@ def stock_candle():
     plt.savefig("static/img/candlestick{}.png".format(stock_name))
     return "static/img/candlestick{}.png".format(stock_name)
 
+@app.route('/wordcloud', methods=['get', 'post'])
+def wordcloud():
+    stock_name = request.form.get("stock_name")
+
+    data = pd.read_csv('news.csv',encoding='utf-8')
+    noun_extractor = LRNounExtractor_v2(verbose=True)
+    nouns = noun_extractor.train_extract(data[data['name']==stock_name]['content'])
+    
+    count=[]
+    for word, score in sorted(nouns.items()):
+        info=[]
+        word=word.replace('"','').replace('“','').replace('‘','').replace("'",'')
+        if len(word)>1:
+            info.append(word)
+            info.append(score[0])
+
+            count.append(info)
+    
+    icon = Image.open('dollar.png')
+    mask = Image.new("RGB", icon.size, (255,255,255))
+    mask.paste(icon,icon)
+    mask = np.array(mask)
+
+    wordcloud = WordCloud(font_path='NanumGothic.ttf',width=1500,height=1000,background_color='black',mask=mask,max_font_size=300)
+    wordcloud.generate_from_frequencies(dict(count))
+    plt.imshow(wordcloud)
+    wordcloud.to_file('static/img/word{}.png'.format(stock_name))
+    return 'static/img/word{}.png'.format(stock_name)
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port=5000)
