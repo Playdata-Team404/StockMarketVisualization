@@ -2,12 +2,18 @@ from flask import Flask, render_template, request, jsonify
 from pandas.core.accessor import register_index_accessor
 from crawler import Crawling
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
 from matplotlib import font_manager, rc
 import warnings
 import platform
+from soynlp.utils import DoublespaceLineCorpus
+from soynlp.noun import LRNounExtractor_v2
+from soynlp.word import WordExtractor
+from wordcloud import WordCloud
+from PIL import Image
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -83,6 +89,30 @@ def stock_candle():
     plt.savefig("static/img/candlestick{}.png".format(stock_name))
     return "static/img/candlestick{}.png".format(stock_name)
 
+@app.route('/wordcloud', methods=['get', 'post'])
+def wordcloud():
+    stock_name = request.form.get("stock_name")
+
+    data = pd.read_csv('news.csv',encoding='utf-8')
+    # 명사 추출 객체 만들기
+    noun_extractor = LRNounExtractor_v2(verbose=True)
+    # 명사 추출 학습 (frequency, score 출력)
+    nouns = noun_extractor.train_extract(data[data['name']==stock_name]['content'])
+    
+    count=[]
+    for word, score in sorted(nouns.items()):
+        info=[]
+        word=word.replace('"','').replace('“','').replace('‘','').replace("'",'')
+        if len(word)>1:
+            info.append(word)
+            # 두 글자 이상 단어 가운데 frequency만 가져옴
+            info.append(score[0])
+            count.append(info)
+
+    wordcloud = WordCloud(font_path='NanumGothic.ttf',width=1500,height=1000,background_color='black',max_font_size=300)
+    wordcloud.generate_from_frequencies(dict(count))
+    wordcloud.to_file('static/img/word{}.png'.format(stock_name))
+    return 'static/img/word{}.png'.format(stock_name)
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port=5000)

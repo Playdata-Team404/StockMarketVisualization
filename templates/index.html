@@ -7,7 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-    <button onclick="get_stock()">실시간 주식 정보 업데이트</button><br>
+    <h1>주식 데이터 시각화</h1>
+    <hr><br>
+    <button onclick="get_stock()">실시간 주식 정보 업데이트</button>
+    <button onclick="get_news()">실시간 뉴스 정보 업데이트</button><br>
     <select name="stock_name" id="stock_name">
         <option value="삼성전자">삼성전자</option>
         <option value="SK하이닉스">SK하이닉스</option>
@@ -21,8 +24,10 @@
         <option value="셀트리온">셀트리온</option>
     </select>
     <button onclick="stockchart()">종목 차트 보기</button>
+    <button onclick="wordcloud()">종목 뉴스 키워드 보기</button>
 
     <div id="chart_view"></div>
+    <div id="cloud_view"></div>
 
     <br><hr><br>
 
@@ -42,6 +47,17 @@
             xhttp.send();
         }
 
+        function get_news() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    alert("실시간 뉴스 데이터 저장 성공")
+                }
+            };
+            xhttp.open("GET", "getnews");
+            xhttp.send();
+        }
+
         function stockchart() {
             const xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
@@ -57,6 +73,20 @@
             xhttp.send(query);
         }
 
+        function wordcloud() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var img_name = this.responseText
+                    document.getElementById("cloud_view").innerHTML = '<img src="./' + img_name + '" width=1000 height=700>'
+                }
+            };
+            xhttp.open("POST", "wordcloud");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            query = "stock_name=" + document.getElementById("stock_name").value;
+            console.log(query)
+            xhttp.send(query);
+        }
 
     </script>
 </body>

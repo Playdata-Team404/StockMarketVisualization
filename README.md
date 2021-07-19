@@ -44,10 +44,7 @@
 4. flask 연동 및 기능 test
  
  <h2><li> 🛠️ Future Improvements </h2></li>
-1. 일일 뉴스 업데이트 기능
-2. 워드클라우드(with 자연어 처리)
-3. kibana dashboard - 주식 정보 시각화
-4. html 템플릿(찾아보기)
-5. 발표 내용 정리
+1. 일일 주식 정보 & 뉴스 업데이트 기능 자동화
+
  
 </ol>
