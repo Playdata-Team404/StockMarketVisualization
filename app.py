@@ -71,7 +71,7 @@ def stock_candle():
     ax.xaxis.set_major_locator(ticker.MaxNLocator(20))
 
     # 그래프 title과 축 이름 지정
-    ax.set_title('INDEX', fontsize=22)
+    ax.set_title(stock_name, fontsize=22)
     ax.set_xlabel('Date')
 
     # 캔들차트 그리기
