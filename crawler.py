@@ -88,6 +88,68 @@ class Crawling():
         df
         df.to_csv("C:/ELKStack/0.dataset/stock.csv", header=False, index=False)
 
+    def crawl_news_one():
+        warnings.filterwarnings('ignore')
+        stock = []
+        es = Elasticsearch()
+        res = es.search(index="stock_info", body={"size": 0, "aggs": {
+                        "code": {"terms": {"field": "code.keyword"}}}})
+
+        stock = []
+        for stock_num in res['aggregations']['code']['buckets']:
+            try:
+                main_url = "https://m.stock.naver.com/index.html#/domestic/stock/" + \
+                    stock_num["key"] + "/news/title"
+                driver = webdriver.Chrome("C:/driver/chromedriver")
+                driver.get(main_url)
+                time.sleep(2)
+
+                for page_num in range(1, 21):
+                    news = []
+                    time.sleep(1)
+                    try:
+                        boxItem = driver.find_element_by_css_selector(
+                            f"#content > div:nth-child(4) > div:nth-child(3) > div:nth-child(2) > div > div.VNewsList_article__1gx6H > ul > li:nth-child({page_num}) > a")
+                    except:
+                        print("Pass")
+                        continue
+                    boxItem.click()
+                    time.sleep(2)
+
+                    # 현재 날짜와 기사 작성 일짜가 다르면 해당 주식에 대한 뉴스 크롤링을 멈추고 다음 뉴스 크롤링 시작
+                    if datetime.today().strftime("%Y.%m.%d") != driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/div[1]/time').text[:10]:
+                        break
+
+                    news.append(driver.find_element_by_xpath(
+                        '//*[@id="content"]/div[2]/div[1]/div[1]/span[1]').text[:6])
+                    news.append(driver.find_element_by_xpath(
+                        '//*[@id="content"]/div[2]/div[1]/div[1]/span[2]').text)
+                    news.append(driver.find_element_by_xpath(
+                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/div[1]/time').text[:10])
+                    news.append(driver.find_element_by_xpath(
+                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/strong').text)
+                    news.append(driver.find_element_by_xpath(
+                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[2]/div[1]').text)
+
+                    time.sleep(2)
+                    driver.back()
+                    stock.append(news)
+                # driver.close()
+
+            except Exception as e:
+                print("driver 주소 설정 에러", e)
+            finally:
+                time.sleep(2)
+                driver.close()
+
+        col = ['code', 'name', 'date', 'subject', 'content']
+        df = pd.DataFrame(stock, columns=col)
+
+        d_records = df.to_dict('records')
+        es_dao.save_news(d_records)
+        df.to_csv("C:/ELKStack/0.dataset/news.csv",
+                  mode='a', header=False, index=False)
+
     def crawl_news_all():
         driver = webdriver.Chrome("C:/driver/chromedriver")
         stock = []
@@ -148,122 +210,7 @@ class Crawling():
         d_records = df.to_dict('records')
         es_dao.save_news(d_records)
         df.to_csv("C:/ELKStack/0.dataset/news.csv", header=False, index=False)
-
-    def crawl_news_one():
-        warnings.filterwarnings('ignore')
-        stock = []
-        es = Elasticsearch()
-        res = es.search(index="stock_info", body={"size": 0, "aggs": {
-                        "code": {"terms": {"field": "code.keyword"}}}})
-
-        stock = []
-        for stock_num in res['aggregations']['code']['buckets'][8:9]:
-            try:
-                main_url = "https://m.stock.naver.com/index.html#/domestic/stock/" + \
-                    stock_num["key"] + "/news/title"
-                driver = webdriver.Chrome("C:/driver/chromedriver")
-                driver.get(main_url)
-                time.sleep(2)
-
-                for page_num in range(1, 21):
-                    news = []
-                    time.sleep(1)
-                    try:
-                        boxItem = driver.find_element_by_css_selector(
-                            f"#content > div:nth-child(4) > div:nth-child(3) > div:nth-child(2) > div > div.VNewsList_article__1gx6H > ul > li:nth-child({page_num}) > a")
-                    except:
-                        print("Pass")
-                        continue
-                    boxItem.click()
-                    time.sleep(2)
-
-                    # 현재 날짜와 기사 작성 일짜가 다르면 해당 주식에 대한 뉴스 크롤링을 멈추고 다음 뉴스 크롤링 시작
-                    if datetime.today().strftime("%Y.%m.%d") != driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/div[1]/time').text[:10]:
-                        break
-
-                    news.append(driver.find_element_by_xpath(
-                        '//*[@id="content"]/div[2]/div[1]/div[1]/span[1]').text[:6])
-                    news.append(driver.find_element_by_xpath(
-                        '//*[@id="content"]/div[2]/div[1]/div[1]/span[2]').text)
-                    news.append(driver.find_element_by_xpath(
-                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/div[1]/time').text[:10])
-                    news.append(driver.find_element_by_xpath(
-                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/strong').text)
-                    news.append(driver.find_element_by_xpath(
-                        '//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[2]/div[1]').text)
-
-                    time.sleep(2)
-                    driver.back()
-                    stock.append(news)
-                # driver.close()
-
-            except Exception as e:
-                print("driver 주소 설정 에러", e)
-            finally:
-                time.sleep(2)
-                driver.close()
-
-        col = ['code', 'name', 'date', 'subject', 'content']
-        df = pd.DataFrame(stock, columns=col)
-
-        d_records = df.to_dict('records')
-        es_dao.save_news(d_records)
-        df.to_csv("C:/ELKStack/0.dataset/news_test.csv",
-                  mode='a', header=False, index=False)
-  
-    def crawl_news_all():
-        warnings.filterwarnings('ignore')
-        driver = webdriver.Chrome("C:/driver/chromedriver")
-        stock=[]
-        driver.get('https://m.stock.naver.com/index.html#/domestic/capitalization/KOSPI')
-        for i in range(1,11):
-
-            #각 회사 들어가기
-            driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[2]/div[2]/div[1]/table/tbody/tr[{}]'.format(i)).click()
-            time.sleep(1)
-
-            #뉴스항목 들어가기
-            driver.find_element_by_xpath('//*[@id="common_component_tab"]/div/ul/li[3]/a/span').click()
-            time.sleep(1)
-            
-            # 뉴스 클릭
-            for i in range(3):
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                time.sleep(1)
-            for i in range(1,61):
-
-                time.sleep(3)
-                news=[]
-                
-                try:
-                    driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[4]/ul/li[{}]/a'.format(i)).click()
-                except:
-                    print("Pass")
-                    continue
-
-                time.sleep(2)
-
-                news.append(driver.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/span[1]').text[:6])
-                news.append(driver.find_element_by_xpath('//*[@id="content"]/div[2]/div[1]/div[1]/span[2]').text)
-                news.append(driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/div[1]/time').text[:10])
-                news.append(driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[1]/strong').text)
-                news.append(driver.find_element_by_xpath('//*[@id="content"]/div[4]/div[3]/div[2]/div/div[1]/div[2]/div[1]').text)
-
-                time.sleep(2)
-                driver.back()
-                time.sleep(2)
-                stock.append(news)
-                
-            driver.back()
-            time.sleep(2)
-            driver.back()
-            time.sleep(2)
-
-        driver.close()
-
-        col=['code','name','date','subject','content']
-        df = pd.DataFrame(stock,columns=col)
-        df.to_csv("news.csv", mode='a',header=False,index=False)
+    
 
 # if __name__ == '__main__':
     # Crawling.crawl_stock_all()
