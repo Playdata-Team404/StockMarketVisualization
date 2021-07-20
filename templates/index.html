@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard Admin Template by Tooplate.com</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <link rel="stylesheet" href="../static/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../static/css/fullcalendar.min.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/tooplate.css">
+    <script src="{{url_for('static', filename='js/stock.js')}}"></script>
+
+</head>
+
+<body id="reportsPage">
+    <div class="" id="home">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="navbar navbar-expand-xl navbar-light bg-light">
+                        <a class="navbar-brand" href="#">
+                            <i class="fas fa-3x fa-tachometer-alt tm-site-icon"></i>
+                            <h1 class="tm-site-title mb-0">TEAM-404 <br>STOCK VISUAL</h1>
+                        </a>
+                        <button class="navbar-toggler ml-auto mr-0" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mx-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#" onclick="get_stock()">STOCK UPDATE
+                                        <!-- <span class="sr-only">(current)</span> -->
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#" onclick="get_news()">NEWS UPDATE
+                                        <!-- <span class="sr-only">(current)</span> -->
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <select name="stock_name" class="nav-link dropdown-toggle" href="#" id="stock_name"
+                                        role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        GRAPH
+                                        <!-- </a> -->
+                                        <!-- <select name="stock_name" id="stock_name" class="dropdown-menu" aria-labelledby="navbarDropdown"> -->
+                                        <!-- <a class="dropdown-item" href="#">Daily Report</a>
+                                        <a class="dropdown-item" href="#">Weekly Report</a>
+                                        <a class="dropdown-item" href="#">Yearly Report</a> -->
+                                        <!-- <select name="stock_name" id="stock_name"> -->
+                                        <option>종목선택</option>
+                                        <option class="dropdown-item" value="삼성전자">삼성전자</option>
+                                        <option class="dropdown-item" value="SK하이닉스">SK하이닉스</option>
+                                        <option class="dropdown-item" value="NAVER">NAVER</option>
+                                        <option class="dropdown-item" value="카카오">카카오</option>
+                                        <option class="dropdown-item" value="삼성전자우">삼성전자우</option>
+                                        <option class="dropdown-item" value="삼성바이오로직스">삼성바이오로직스</option>
+                                        <option class="dropdown-item" value="LG화학">LG화학</option>
+                                        <option class="dropdown-item" value="삼성SDI">삼성SDI</option>
+                                        <option class="dropdown-item" value="현대차">현대차</option>
+                                        <option class="dropdown-item" value="셀트리온">셀트리온</option>
+                                    </select>
+
+                                    <!-- </div> -->
+                                </li>
+                                <li>
+                                    <button onclick="stockchart()">STOCK CHARTS</button><br>
+                                    <button onclick="wordcloud()">NEWS KEYWORD</button>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link" href="accounts.html">Accounts</a>
+                                </li> -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        STOCK SITE
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="https://stock.naver.com/sise/" target="_blank">네이버 주식</a>
+                                        <a class="dropdown-item" href="https://finance.daum.net/" target="_blank">카카오 주식</a>
+                                        <a class="dropdown-item" href="https://kr.investing.com/equities/south-korea" target="_blank">한국 주식 시장</a>
+                                    </div>
+                                </li>
+
+
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <!-- row -->
+            <div class="row tm-content-row tm-mt-big">
+                <div class="tm-col tm-col-big">
+                    <div class="bg-white tm-block h-100">
+                        <h2 class="tm-block-title">Candle Chart</h2>
+                        <div id="chart_view"></div>
+                        <!-- <canvas id="chart_view"></canvas> -->
+                    </div>
+                </div>
+                <div class="tm-col tm-col-big">
+                    <div class="bg-white tm-block h-100">
+                        <h2 class="tm-block-title">Performance</h2>
+                        <div id="cloud_view"></div>
+                    </div>
+                </div>
+                <div class="tm-col tm-col-small">
+                    <div class="bg-white tm-block h-100">
+                        <h2 class="tm-block-title">주식 보러가기</h2>
+                        <ol class="tm-list-group">
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/005930/total"
+                                    target="_blank">삼성전자</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/000660/total"
+                                    target="_blank"></a>SK하이닉스</li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/035420/total"
+                                    target="_blank">NAVER</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/035720/total"
+                                    target="_blank">카카오</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/005935/total"
+                                    target="_blank">삼성전자우</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/207940/total"
+                                    target="_blank">삼성바이오로직스</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/051910/total"
+                                    target="_blank">LG화학</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/006400/total"
+                                    target="_blank">삼성SDI</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/005380/total"
+                                    target="_blank">현대차</a></li>
+                            <li class="tm-list-group-item"><a
+                                    href="https://m.stock.naver.com/index.html#/domestic/stock/068270/total"
+                                    target="_blank">셀트리온</a></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="tm-col tm-col-big">
+                    <div class="bg-white tm-block h-100">
+                        <div class="row">
+                            <div class="col-8">
+                                <h2 class="tm-block-title d-inline-block">Top Product List</h2>
+                                
+                            </div>
+                            <div class="col-4 text-right">
+                                <a href="products.html" class="tm-link-black">View All</a>
+                            </div>
+                        </div>
+                        <ol class="tm-list-group tm-list-group-alternate-color tm-list-group-pad-big">
+                            <li class="tm-list-group-item">
+                                Donec eget libero
+                            </li>
+                            <li class="tm-list-group-item">
+                                Nunc luctus suscipit elementum
+                            </li>
+                            <li class="tm-list-group-item">
+                                Maecenas eu justo maximus
+                            </li>
+                            <li class="tm-list-group-item">
+                                Pellentesque auctor urna nunc
+                            </li>
+                            <li class="tm-list-group-item">
+                                Sit amet aliquam lorem efficitur
+                            </li>
+                            <li class="tm-list-group-item">
+                                Pellentesque auctor urna nunc
+                            </li>
+                            <li class="tm-list-group-item">
+                                Sit amet aliquam lorem efficitur
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="tm-col tm-col-big">
+                    <div class="bg-white tm-block h-100">
+                        <h2 class="tm-block-title">Calendar</h2>
+                        <div id="calendar">
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-12 text-right">
+                                <a href="#" class="tm-link-black">View Schedules</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tm-col tm-col-small">
+                    <div class="bg-white tm-block h-100">
+                        <canvas id="pieChart" class="chartjs-render-monitor"></canvas>
+                    </div>
+                </div>
+            </div>
+            <footer class="row tm-mt-small">
+                <div class="col-12 font-weight-light">
+                    <p class="d-inline-block tm-bg-black text-white py-2 px-4">
+                        Copyright &copy; 2018. Created by
+                        <a href="http://www.tooplate.com" class="text-white tm-footer-link">Tooplate</a> | Distributed
+                        by <a href="https://themewagon.com" class="text-white tm-footer-link">ThemeWagon</a>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="../static/js/moment.min.js"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="../static/js/utils.js"></script>
+    <script src="../static/js/Chart.min.js"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="../static/js/fullcalendar.min.js"></script>
+    <!-- https://fullcalendar.io/ -->
+    <script src="../static/js/bootstrap.min.js"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="../static/js/tooplate-scripts.js"></script>
+    <script>
+        let ctxLine,
+            ctxBar,
+            ctxPie,
+            optionsLine,
+            optionsBar,
+            optionsPie,
+            configLine,
+            configBar,
+            configPie,
+            lineChart;
+        barChart, pieChart;
+        // DOM is ready
+        $(function () {
+            updateChartOptions();
+            drawLineChart(); // Line Chart
+            drawBarChart(); // Bar Chart
+            drawPieChart(); // Pie Chart
+            drawCalendar(); // Calendar
+
+            $(window).resize(function () {
+                updateChartOptions();
+                updateLineChart();
+                updateBarChart();
+                reloadPage();
+            });
+        })
+    </script>
+</body>
+
+</html>
