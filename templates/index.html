@@ -7,12 +7,58 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TEAM-404 STOCK VISUAL</title>
 
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <script src="{{url_for('static', filename='js/stock.js')}}"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="../static/js/moment.min.js"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="../static/js/utils.js"></script>
+    <script src="../static/js/Chart.min.js"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="../static/js/fullcalendar.min.js"></script>
+    <!-- https://fullcalendar.io/ -->
+    <script src="../static/js/bootstrap.min.js"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="../static/js/tooplate-scripts.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart(stock) {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Date');
+            data.addColumn('number', '5일 이동평균선');
+            data.addColumn('number', '10일 이동평균선');
+
+            for (key in stock){
+            data.addRow(
+            [stock[key].index, stock[key].ma10,stock[key].ma5]
+            )
+            }
+
+            coin_name = document.getElementById("coin_name").value
+            var options = {
+            legend: { position: 'none' },
+            chart: {
+                title: coin_name
+            },
+            width: 550,
+            height: 300
+            };
+
+            var chart = new google.charts.Line(document.getElementById('linechart_material'));
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+    </script>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
     <link rel="stylesheet" href="../static/css/fontawesome.min.css">
     <link rel="stylesheet" href="../static/css/fullcalendar.min.css">
     <link rel="stylesheet" href="../static/css/bootstrap.min.css">
     <link rel="stylesheet" href="../static/css/tooplate.css">
-    <script src="{{url_for('static', filename='js/stock.js')}}"></script>
+    
+
 
 </head>
 
@@ -24,7 +70,7 @@
                     <nav class="navbar navbar-expand-xl navbar-light bg-light">
                         <a class="navbar-brand" href="#">
                             <i class="fas fa-3x fa-tachometer-alt tm-site-icon"></i>
-                            <h1 class="tm-site-title mb-0">TEAM-404 <br>STOCK VISUAL</h1>
+                            <h1 class="tm-site-title mb-0">TEAM-404 <br>Stock & Bitcoin</h1>
                         </a>
                         <button class="navbar-toggler ml-auto mr-0" type="button" data-toggle="collapse"
                             data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -36,24 +82,16 @@
                             <ul class="navbar-nav mx-auto">
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#" onclick="get_stock()">STOCK UPDATE
-                                        <!-- <span class="sr-only">(current)</span> -->
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#" onclick="get_news()">NEWS UPDATE
-                                        <!-- <span class="sr-only">(current)</span> -->
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown">
                                     <select name="stock_name" class="nav-link dropdown-toggle" href="#" id="stock_name"
                                         role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         GRAPH
-                                        <!-- </a> -->
-                                        <!-- <select name="stock_name" id="stock_name" class="dropdown-menu" aria-labelledby="navbarDropdown"> -->
-                                        <!-- <a class="dropdown-item" href="#">Daily Report</a>
-                                        <a class="dropdown-item" href="#">Weekly Report</a>
-                                        <a class="dropdown-item" href="#">Yearly Report</a> -->
-                                        <!-- <select name="stock_name" id="stock_name"> -->
                                         <option>종목선택</option>
                                         <option class="dropdown-item" value="삼성전자">삼성전자</option>
                                         <option class="dropdown-item" value="SK하이닉스">SK하이닉스</option>
@@ -67,15 +105,12 @@
                                         <option class="dropdown-item" value="셀트리온">셀트리온</option>
                                     </select>
 
-                                    <!-- </div> -->
                                 </li>
                                 <li>
-                                    <button onclick="stockchart()">STOCK CHARTS</button><br>
-                                    <button onclick="wordcloud()">NEWS KEYWORD</button>
+                                <button onclick="stockchart()" style="border: none; width: 180px; background-color: #e6e6e6;">STOCK CHARTS</button><br>
+                                <button onclick="wordcloud()" style="border: none; width: 180px; background-color: #e6e6e6;">NEWS KEYWORD</button>
                                 </li>
-                                <!-- <li class="nav-item">
-                                    <a class="nav-link" href="accounts.html">Accounts</a>
-                                </li> -->
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -87,20 +122,16 @@
                                         <a class="dropdown-item" href="https://kr.investing.com/equities/south-korea" target="_blank">한국 주식 시장</a>
                                     </div>
                                 </li>
-
-
                             </ul>
                         </div>
                     </nav>
                 </div>
             </div>
-            <!-- row -->
             <div class="row tm-content-row tm-mt-big">
                 <div class="tm-col tm-col-big">
                     <div class="bg-white tm-block h-100">
                         <h2 class="tm-block-title">Candle Chart</h2>
                         <div id="chart_view"></div>
-                        <!-- <canvas id="chart_view"></canvas> -->
                     </div>
                 </div>
                 <div class="tm-col tm-col-big">
@@ -182,6 +213,16 @@
                                 <option value="KRW-BTG">비트코인골드</option>
                                 <option value="KRW-AQT">알파쿼크</option>
                             </select>
+                            <select name="day" id="day">
+                                <option value="10">10일</option>
+                                <option value="30">1달</option>
+                                <option value="90">3달</option>
+                                <option value="180">6달</option>
+                                <option value="365">1년</option>
+                                <option value="730">2년</option>
+                                <option value="1100">3년</option>
+                            </select>
+
                             <button onclick="upbit()">시세 조회</button>
                             <button onclick="upbit_graph()">이동평균선</button>
                             <br><hr>
@@ -193,8 +234,8 @@
                 </div>
                 <div class="tm-col tm-col-big">
                     <div class="bg-white tm-block h-100">
-                        <h2 class="tm-block-title">Calendar</h2>
-                        <div id="calendar">
+                        <h2 class="tm-block-title">이동평균선</h2>
+                        <div div id="linechart_material" style="width: 500px; height: 300px">
                         </div>
                     </div>
                 </div>
@@ -211,24 +252,15 @@
             <footer class="row tm-mt-small">
                 <div class="col-12 font-weight-light">
                     <p class="d-inline-block tm-bg-black text-white py-2 px-4">
-                    
+                        Copyright &copy; 2018. Created by
+                        <a href="http://www.tooplate.com" class="text-white tm-footer-link">Tooplate</a> | Distributed
+                        by <a href="https://themewagon.com" class="text-white tm-footer-link">ThemeWagon</a>
                     </p>
                 </div>
             </footer>
         </div>
     </div>
-    <script src="../static/js/jquery-3.3.1.min.js"></script>
-    <!-- https://jquery.com/download/ -->
-    <script src="../static/js/moment.min.js"></script>
-    <!-- https://momentjs.com/ -->
-    <script src="../static/js/utils.js"></script>
-    <script src="../static/js/Chart.min.js"></script>
-    <!-- http://www.chartjs.org/docs/latest/ -->
-    <script src="../static/js/fullcalendar.min.js"></script>
-    <!-- https://fullcalendar.io/ -->
-    <script src="../static/js/bootstrap.min.js"></script>
-    <!-- https://getbootstrap.com/ -->
-    <script src="../static/js/tooplate-scripts.js"></script>
+
 </body>
 
 </html>
