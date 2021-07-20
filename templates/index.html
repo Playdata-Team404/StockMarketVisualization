@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Dashboard Admin Template by Tooplate.com</title>
+    <title>TEAM-404 STOCK VISUAL</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
     <link rel="stylesheet" href="../static/css/fontawesome.min.css">
@@ -151,36 +151,44 @@
                     <div class="bg-white tm-block h-100">
                         <div class="row">
                             <div class="col-8">
-                                <h2 class="tm-block-title d-inline-block">Top Product List</h2>
-                                
-                            </div>
-                            <div class="col-4 text-right">
-                                <a href="products.html" class="tm-link-black">View All</a>
+                                <h2 class="tm-block-title d-inline-block">Bitcoin</h2>
                             </div>
                         </div>
-                        <ol class="tm-list-group tm-list-group-alternate-color tm-list-group-pad-big">
-                            <li class="tm-list-group-item">
-                                Donec eget libero
-                            </li>
-                            <li class="tm-list-group-item">
-                                Nunc luctus suscipit elementum
-                            </li>
-                            <li class="tm-list-group-item">
-                                Maecenas eu justo maximus
-                            </li>
-                            <li class="tm-list-group-item">
-                                Pellentesque auctor urna nunc
-                            </li>
-                            <li class="tm-list-group-item">
-                                Sit amet aliquam lorem efficitur
-                            </li>
-                            <li class="tm-list-group-item">
-                                Pellentesque auctor urna nunc
-                            </li>
-                            <li class="tm-list-group-item">
-                                Sit amet aliquam lorem efficitur
-                            </li>
-                        </ol>
+                        <div>
+                            <select name="coin_name" id="coin_name">
+                                <option value="KRW-BTC">비트코인</option>
+                                <option value="KRW-ETC">이더리움</option>
+                                <option value="KRW-XRP">리플</option>
+                                <option value="KRW-DOGE">도지코인</option>
+                                <option value="KRW-ETC">이더리움클래식</option>
+                                <option value="KRW-AXS">엑시인피니티</option>
+                                <option value="KRW-XEM">넴</option>
+                                <option value="KRW-MFT">메인프레임</option>
+                                <option value="KRW-CRE">캐리프로토콜</option>
+                                <option value="KRW-SAND">샌드박스</option>
+                                <option value="KRW-TT">썬더토큰</option>
+                                <option value="KRW-MLK">밀크</option>
+                                <option value="KRW-AHT">아하토큰</option>
+                                <option value="KRW-REP">어거</option>
+                                <option value="KRW-EOS">이오스</option>
+                                <option value="KRW-ADA">에이다</option>
+                                <option value="KRW-DOT">폴카닷</option>
+                                <option value="KRW-FLOW">플로우</option>
+                                <option value="KRW-UPP">센티넬프로토콜</option>
+                                <option value="KRW-VET">비체인</option>
+                                <option value="KRW-GLM">골렘</option>
+                                <option value="KRW-TRX">트론</option>
+                                <option value="KRW-MED">메디블록</option>
+                                <option value="KRW-BTG">비트코인골드</option>
+                                <option value="KRW-AQT">알파쿼크</option>
+                            </select>
+                            <button onclick="upbit()">시세 조회</button>
+                            <button onclick="upbit_graph()">이동평균선</button>
+                            <br><hr>
+                            <div id='upbit'></div>
+                            <div id='upbit2' style="display: none;"></div>
+
+                        </div>
                     </div>
                 </div>
                 <div class="tm-col tm-col-big">
@@ -224,34 +232,6 @@
     <script src="../static/js/bootstrap.min.js"></script>
     <!-- https://getbootstrap.com/ -->
     <script src="../static/js/tooplate-scripts.js"></script>
-    <script>
-        let ctxLine,
-            ctxBar,
-            ctxPie,
-            optionsLine,
-            optionsBar,
-            optionsPie,
-            configLine,
-            configBar,
-            configPie,
-            lineChart;
-        barChart, pieChart;
-        // DOM is ready
-        $(function () {
-            updateChartOptions();
-            drawLineChart(); // Line Chart
-            drawBarChart(); // Bar Chart
-            drawPieChart(); // Pie Chart
-            drawCalendar(); // Calendar
-
-            $(window).resize(function () {
-                updateChartOptions();
-                updateLineChart();
-                updateBarChart();
-                reloadPage();
-            });
-        })
-    </script>
 </body>
 
 </html>
