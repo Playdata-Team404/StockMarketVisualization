@@ -105,5 +105,43 @@ def wordcloud():
     wordcloud.to_file('static/img/word{}.png'.format(stock_name))
     return 'static/img/word{}.png'.format(stock_name)
 
+@app.route('/upbit', methods=['POST'])
+def upbit():
+    plt.rcParams["figure.figsize"] = (12,6)
+    # plt.rcParams["axes.formatter.limits"] = -10000, 10000
+    coin_name = request.form.get("coin_name")
+    # df = pyupbit.get_ohlcv(coin_name)
+    # coin_name = "KRW-TT"
+    price_KRW = pyupbit.get_current_price([coin_name])
+
+    df = pyupbit.get_ohlcv(coin_name, interval='day', count=100)
+    df["close"].plot()
+    plt.savefig('static/img/{}.png'.format(coin_name))
+    return '현재 시세 : '+str((price_KRW[coin_name]))+' 원'
+
+@app.route('/upbit_graph', methods=['POST'])
+def upbit_graph():
+    coin_name = request.form.get("coin_name")
+    # coin_name = "KRW-ETH"
+    df = pyupbit.get_ohlcv(coin_name, interval='day', count=1000)
+    # df = pyupbit.get_ohlcv("KRW-ETH")
+    ma5 = df['close'].rolling(window=5).mean() 
+    ma10 = df['close'].rolling(window=10).mean()
+    ma5 = ma5.reset_index()
+    ma10 = ma10.reset_index()
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(x=ma5['index'], y=ma5['close'],
+                name='이동평균선 5일')
+    )
+    fig.add_trace(
+        go.Scatter(x=ma10['index'], y=ma10['close'],
+                name='이동평균선 10일')
+    )
+    fig.update_layout(title_text = '종가기준 이동평균선 시각화({})'.format(coin_name)
+    ,yaxis_tickformat = ',')
+    fig.show()
+    return coin_name
+
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port=5000)
