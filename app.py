@@ -1,24 +1,17 @@
+import warnings
+import platform
 from flask import Flask, render_template, request, jsonify
-from pandas.core.accessor import register_index_accessor
-from crawler import Crawling
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
 from matplotlib import font_manager, rc
-import warnings
-import platform
-from soynlp.utils import DoublespaceLineCorpus
+from mpl_finance import candlestick2_ohlc
 from soynlp.noun import LRNounExtractor_v2
-from soynlp.word import WordExtractor
 from wordcloud import WordCloud
 from PIL import Image
+from crawler import Crawling
 import pyupbit
-import datetime
-import matplotlib as mpl
-import plotly.express as px
-import plotly.graph_objects as go
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -98,7 +91,6 @@ def wordcloud():
         if len(word)>1:
             info.append(word)
             info.append(score[0])
-
             count.append(info)
 
     icon = Image.open('free2.png')
@@ -113,44 +105,34 @@ def wordcloud():
     wordcloud.to_file('static/img/word{}.png'.format(stock_name))
     return 'static/img/word{}.png'.format(stock_name)
 
-@app.route('/upbit', methods=['POST'])
+@app.route('/upbit', methods=['get', 'post'])
 def upbit():
     plt.rcParams["figure.figsize"] = (12,6)
-    # plt.rcParams["axes.formatter.limits"] = -10000, 10000
     coin_name = request.form.get("coin_name")
-    # df = pyupbit.get_ohlcv(coin_name)
-    # coin_name = "KRW-TT"
+    period = request.form.get("day")
     price_KRW = pyupbit.get_current_price([coin_name])
-
-    df = pyupbit.get_ohlcv(coin_name, interval='day', count=100)
+    df = pyupbit.get_ohlcv(coin_name, interval='day', count=int(period))
     df["close"].plot()
     plt.savefig('static/img/{}.png'.format(coin_name))
     plt.clf()
     return '현재 시세 : '+str((price_KRW[coin_name]))+' 원'
 
-@app.route('/upbit_graph', methods=['POST'])
+@app.route('/upbit_graph', methods=['get', 'post'])
 def upbit_graph():
     coin_name = request.form.get("coin_name")
-    # coin_name = "KRW-ETH"
-    df = pyupbit.get_ohlcv(coin_name, interval='day', count=1000)
-    # df = pyupbit.get_ohlcv("KRW-ETH")
-    ma5 = df['close'].rolling(window=5).mean() 
-    ma10 = df['close'].rolling(window=10).mean()
-    ma5 = ma5.reset_index()
-    ma10 = ma10.reset_index()
-    fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(x=ma5['index'], y=ma5['close'],
-                name='이동평균선 5일')
-    )
-    fig.add_trace(
-        go.Scatter(x=ma10['index'], y=ma10['close'],
-                name='이동평균선 10일')
-    )
-    fig.update_layout(title_text = '종가기준 이동평균선 시각화({})'.format(coin_name)
-    ,yaxis_tickformat = ',')
-    fig.show()
-    return coin_name
+    df = pyupbit.get_ohlcv(coin_name)
+
+    # 5일 이동평균 계산
+    df['ma5'] = df['close'].rolling(window=5).mean() 
+
+    # 10일 이동평균 계산
+    df['ma10'] = df['close'].rolling(window=10).mean()
+
+    df_mean = df.drop(['open','high','low','close','value','volume'],axis=1)
+    df_mean.reset_index(drop = False,inplace = True)
+    df_mean['index'] = df_mean['index'].apply(lambda x : str(x.date()))
+    d_records = df_mean.to_dict('records')
+    return jsonify(d_records)
 
 if __name__ == '__main__':
     app.run(debug=True, host="127.0.0.1", port=5000)
