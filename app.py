@@ -1,16 +1,24 @@
-import warnings
-import platform
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
+from pandas.core.accessor import register_index_accessor
+from crawler import Crawling
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_finance import candlestick2_ohlc
 import matplotlib.ticker as ticker
 from matplotlib import font_manager, rc
-from mpl_finance import candlestick2_ohlc
+import warnings
+import platform
+from soynlp.utils import DoublespaceLineCorpus
 from soynlp.noun import LRNounExtractor_v2
+from soynlp.word import WordExtractor
 from wordcloud import WordCloud
 from PIL import Image
-from crawler import Crawling
+import pyupbit
+import datetime
+import matplotlib as mpl
+import plotly.express as px
+import plotly.graph_objects as go
 
 app = Flask(import_name=__name__)
 app.config['JSON_AS_ASCII'] = False
