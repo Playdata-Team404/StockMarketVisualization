@@ -39,3 +39,37 @@ function wordcloud() {
     console.log(query)
     xhttp.send(query);
 }
+
+function upbit() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            coin = this.responseText
+            img_name = document.getElementById("coin_name").value
+            alert(img_name)
+            document.getElementById("upbit2").style.display = 'block';
+            document.getElementById("upbit").innerHTML = coin
+            document.getElementById("upbit2").innerHTML = '<img src="./static/img/' + img_name + '.png" width=550 height=300>'
+        }
+    };
+    xhttp.open("POST", "upbit");
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    query = "coin_name=" + document.getElementById("coin_name").value;
+    console.log(query)
+    xhttp.send(query);
+};
+
+
+function upbit_graph() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+   
+           }
+    };
+    xhttp.open("POST", "upbit_graph");
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    query = "coin_name=" + document.getElementById("coin_name").value;
+    console.log(query)
+    xhttp.send(query);
+};
