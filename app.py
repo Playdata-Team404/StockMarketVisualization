@@ -43,7 +43,6 @@ def stock_candle():
         print('Check your OS system')
 
     stock_name = request.form.get("stock_name")
-
     warnings.filterwarnings('ignore')
     col = ['code', 'name', 'date', 'close', 'open', 'high', 'low', 'volume']
     df = pd.read_csv("C:/ELKStack/0.dataset/stock.csv",
@@ -56,14 +55,6 @@ def stock_candle():
     df_ = df_.sort_index(ascending=True)
 
     # 그래프 그리기
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    ax.set_title('INDEX', fontsize=15)
-    ax.set_ylabel("Inter")
-    ax.set_xlabel("Date Time")
-    ax.plot(df_.index, df_[['close', 'MA5', 'MA10']])
-    ax.legend(['close', 'MA5', 'MA10'])
-
     fig = plt.figure(figsize=(20, 10))
     ax = fig.add_subplot(111)
     index = df_.index.astype('str')
@@ -77,7 +68,7 @@ def stock_candle():
     ax.xaxis.set_major_locator(ticker.MaxNLocator(20))
 
     # 그래프 title과 축 이름 지정
-    ax.set_title('INDEX', fontsize=22)
+    ax.set_title(stock_name, fontsize=22)
     ax.set_xlabel('Date')
 
     # 캔들차트 그리기
