@@ -12,8 +12,9 @@
    </ul><br>
    🤡 <a href="https://github.com/purple-cabbage0030">이홍주</a>
    <ul>
-    <li> app.py, index.html 모듈 개발 </li>
+    <li> app.py, index.html, stock.js 모듈 개발 </li>
     <li> ES pipeline 환경 구축 및 flask 연동 비동기 기능 개발</li>
+    <li> 웹 프로토타입 / 노션 / 리드미 정리</li>
    </ul><br>
    🙂 <a href="https://github.com/johnny9210">정일균</a></li>
     <ul>
@@ -44,7 +45,7 @@
 4. flask 연동 및 기능 test
  
  <h2><li> 🛠️ Future Improvements </h2></li>
-1. 일일 주식 정보 & 뉴스 업데이트 기능 자동화
+1. 로그인 기능 추가하여 관심 주식 정보 following 기능
 
- 
+ <li><h2><a href="https://sprinkle-fireplace-626.notion.site/Stock-Market-Visualization-Analysis-f99fc7d903e644948626abb573c16b5b"> Notion Link </a></h2></li>
 </ol>
