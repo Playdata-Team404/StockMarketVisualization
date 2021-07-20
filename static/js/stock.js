@@ -9,12 +9,23 @@ function get_stock() {
     xhttp.send();
 }
 
+function get_news() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            alert("실시간 주식 데이터 저장 성공")
+        }
+    };
+    xhttp.open("GET", "getnews");
+    xhttp.send();
+}
+
 function stockchart() {
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var img_name = this.responseText
-            document.getElementById("chart_view").innerHTML = '<img src="./' + img_name + '" width=570 height=310>'
+            document.getElementById("chart_view").innerHTML = '<img src="./' + img_name + '" width=570 height=350>'
         }
     };
     xhttp.open("POST", "stockchart");
@@ -30,7 +41,7 @@ function wordcloud() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var img_name = this.responseText
-            document.getElementById("cloud_view").innerHTML = '<img src="./' + img_name + '" width=550 height=300>'
+            document.getElementById("cloud_view").innerHTML = '<img src="./' + img_name + '" width=550 height=400>'
         }
     };
     xhttp.open("POST", "wordcloud");
@@ -48,12 +59,14 @@ function upbit() {
             img_name = document.getElementById("coin_name").value
             document.getElementById("upbit2").style.display = 'block';
             document.getElementById("upbit").innerHTML = coin
-            document.getElementById("upbit2").innerHTML = '<img src="./static/img/' + img_name + '.png" width=550 height=300>'
+            var tmpDate = new Date();
+            document.getElementById("upbit2").innerHTML = '<img src="./static/img/' + img_name + '.png?' +tmpDate.getTime()+'" width=550 height=300>'
         }
     };
     xhttp.open("POST", "upbit");
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    query = "coin_name=" + document.getElementById("coin_name").value;
+    query = "coin_name=" + document.getElementById("coin_name").value
+        + "&day=" + document.getElementById("day").value;
     console.log(query)
     xhttp.send(query);
 };
@@ -63,8 +76,10 @@ function upbit_graph() {
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-   
-           }
+            data = this.responseText;
+            data = eval(data)
+            drawChart(data)
+        }
     };
     xhttp.open("POST", "upbit_graph");
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
