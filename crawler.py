@@ -209,7 +209,7 @@ class Crawling():
         df = pd.DataFrame(stock, columns=col)
         d_records = df.to_dict('records')
         es_dao.save_news(d_records)
-        df.to_csv("news.csv", header=False, index=False)
+        df.to_csv("news.csv", header=True, index=False)
     
 
 # if __name__ == '__main__':
