@@ -47,5 +47,5 @@
  <h2><li> 🛠️ Future Improvements </h2></li>
 1. 로그인 기능 추가하여 관심 주식 정보 following 기능
 
- <li><h2><a href="https://sprinkle-fireplace-626.notion.site/Stock-Market-Visualization-Analysis-f99fc7d903e644948626abb573c16b5b"> Notion Link </a></h2></li>
+ <h2><li><a href="https://sprinkle-fireplace-626.notion.site/Stock-Market-Visualization-Analysis-f99fc7d903e644948626abb573c16b5b"> Notion Link </a></li></h2>
 </ol>
