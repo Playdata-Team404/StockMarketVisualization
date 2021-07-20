@@ -108,7 +108,12 @@ def wordcloud():
             # 두 글자 이상 단어 가운데 frequency만 가져옴
             info.append(score[0])
             count.append(info)
-
+            
+    icon = Image.open('free2.png')
+    mask = Image.new("RGB", icon.size, (255,255,255))
+    mask.paste(icon,icon)
+    mask = np.array(mask)
+    
     wordcloud = WordCloud(font_path='NanumGothic.ttf',width=1500,height=1000,background_color='black',max_font_size=300)
     wordcloud.generate_from_frequencies(dict(count))
     wordcloud.to_file('static/img/word{}.png'.format(stock_name))
