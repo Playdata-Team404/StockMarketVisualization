@@ -125,6 +125,7 @@ def upbit():
     df = pyupbit.get_ohlcv(coin_name, interval='day', count=100)
     df["close"].plot()
     plt.savefig('static/img/{}.png'.format(coin_name))
+    plt.clf()
     return '현재 시세 : '+str((price_KRW[coin_name]))+' 원'
 
 @app.route('/upbit_graph', methods=['POST'])
