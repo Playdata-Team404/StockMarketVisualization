@@ -46,7 +46,6 @@ function upbit() {
         if (this.readyState == 4 && this.status == 200) {
             coin = this.responseText
             img_name = document.getElementById("coin_name").value
-            alert(img_name)
             document.getElementById("upbit2").style.display = 'block';
             document.getElementById("upbit").innerHTML = coin
             document.getElementById("upbit2").innerHTML = '<img src="./static/img/' + img_name + '.png" width=550 height=300>'
